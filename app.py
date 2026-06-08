@@ -8,7 +8,6 @@ import pytz
 # 1. 網頁基本設定
 st.set_page_config(page_title="MLB 球場天氣監測與停賽系統", layout="wide")
 
-# ==================== 🎨 視覺美學：暖色系、完美留白、消滅卡頭 ====================
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Noto+Sans+TC:wght@300;400;700&display=swap');
@@ -32,36 +31,36 @@ st.markdown("""
     .main-title {
         font-size: 2.3rem !important;
         font-weight: 700 !important;
-        color: #431407; /* 深焦糖暖棕色 */
+        color: #431407; 
         margin-bottom: 0.3rem !important;
     }
     .sub-title {
         font-size: 1rem !important;
-        color: #EA580C; /* 暖心活力橙 */
+        color: #EA580C; 
         font-weight: 400;
         margin-bottom: 1.5rem !important;
     }
     .section-title {
         font-size: 1.4rem !important;
         font-weight: 600 !important;
-        color: #7C2D12; /* 溫暖肉桂紅棕 */
+        color: #7C2D12;
         margin-top: 0.8rem !important;
         margin-bottom: 0.8rem !important;
     }
     .chart-title {
         font-size: 1.05rem !important;
         font-weight: 600 !important;
-        color: #9A3412; /* 琥珀橘棕 */
+        color: #9A3412;
         margin-bottom: 0.4rem !important;
     }
     .logic-note {
         font-size: 0.82rem !important;
-        color: #78350F; /* 焦糖色小字 */
+        color: #78350F; 
         margin-top: 0.5rem !important;
         opacity: 0.85;
     }
     
-    /* 強制今日區塊左右兩個 Container 等高 */
+    /* 等高 */
     [data-testid="stVScrollTable"] {
         max-height: 230px !important;
     }
@@ -71,7 +70,7 @@ st.markdown("""
 st.markdown('<div class="main-title">MLB 球場天氣監測與停賽系統</div>', unsafe_allow_html=True)
 st.markdown('<div class="sub-title">即時氣象資料 ＆ 歷年停賽交叉分析</div>', unsafe_allow_html=True)
 
-# ==================== 🛠️ 2. 大數據庫：MLB 30 支球隊資料 ====================
+# 2. MLB 球隊資料
 @st.cache_data(show_spinner=False)
 def get_mlb_stadiums_database():
     return {
@@ -109,8 +108,8 @@ def get_mlb_stadiums_database():
 
 STADIUM_DB = get_mlb_stadiums_database()
 
-# ==================== 🛠️ 3. Data Pipeline A：今日即時監測 (消滅 Running 提示) ====================
-@st.cache_data(show_spinner=False) # 🎯 需求 1：關閉 Streamlit 預設灰色工程字提示
+# 3. 今日即時監測 
+@st.cache_data(show_spinner=False) 
 def fetch_live_mlb_pipeline():
     tw_tz = pytz.timezone("Asia/Taipei")
     now_tw = datetime.now(tw_tz)
@@ -189,7 +188,7 @@ def fetch_live_mlb_pipeline():
         return pd.DataFrame(results)
     except: return pd.DataFrame()
 
-# ==================== 🛠️ 4. Data Pipeline B：歷史大數據管線 ====================
+# 4.歷史大數據管線
 @st.cache_data(show_spinner=False)
 def fetch_all_history_pipeline():
     historical_events = []
@@ -236,9 +235,9 @@ def fetch_all_history_pipeline():
     return pd.DataFrame(historical_events)
 
 
-# ==================== 🖥️ 5. 前端呈現 (圖例合一 ＆ 綠色校正 ＆ 準則小字) ====================
+# 5. 呈現 
 
-# ----------------- 【區塊一：今日即時監測與預測】 -----------------
+# 今日即時監測與預測
 st.markdown('<div class="section-title">今日全美球場天氣監測與停賽預報</div>', unsafe_allow_html=True)
 
 with st.spinner("正在同步即時天氣監測數據..."):
@@ -251,18 +250,18 @@ else:
     
     with col_live1:
         with st.container(border=True): 
-            # 🎯 需求 2：色彩群組全面整合至單一欄位，並將安全調回「健康翠綠色」
+            
             fig_live = px.scatter_geo(
                 df_live, lat="緯度", lon="經度", hover_name="球場名稱",
                 hover_data=["對戰組合", "即時氣象"], color="系統風險預測",
                 color_discrete_map={
-                    "🟢 安全 (開打機率高)": "#10B981",      # 🎯 修正：回歸綠色指示
-                    "🔵 巨蛋 (不受天氣影響)": "#3B82F6",     # 舒適亮藍
-                    "🔵 進行中 (賽事開打中)": "#1D4ED8",     # 進行中深藍
-                    "🟡 注意 (中度延遲風險)": "#F0D90D",      # 活力暖橘
-                    "🔴 危險 (高度停賽風險)": "#EF4444",      # 警示鮮紅
-                    "🟤 已完賽 (賽事已結束)": "#78350F",      # 已結束深棕
-                    "❌ 已停賽 (官方已宣布)": "#431407"       # 停賽焦糖褐
+                    "🟢 安全 (開打機率高)": "#10B981",      
+                    "🔵 巨蛋 (不受天氣影響)": "#3B82F6",     
+                    "🔵 進行中 (賽事開打中)": "#1D4ED8",     
+                    "🟡 注意 (中度延遲風險)": "#F0D90D",      
+                    "🔴 危險 (高度停賽風險)": "#EF4444",     
+                    "🟤 已完賽 (賽事已結束)": "#78350F",      
+                    "❌ 已停賽 (官方已宣布)": "#431407"       
                 },
                 projection="albers usa"
             )
@@ -270,7 +269,7 @@ else:
                 geo=dict(scope="usa", showland=True, landcolor="#FFF7ED"),
                 margin={"r":10,"t":10,"l":10,"b":10},
                 height=310,
-                showlegend=True, # 🎯 僅保留這唯一的系統預測圖例
+                showlegend=True, 
                 legend=dict(orientation="h", yanchor="bottom", y=-0.25, xanchor="center", x=0.5, title=None)
             )
             st.plotly_chart(fig_live, width="stretch")
@@ -281,18 +280,17 @@ else:
             with col_title:
                 st.markdown('<div class="chart-title">今日即時賽事狀態與天氣指標清單</div>', unsafe_allow_html=True)
             with col_btn:
-                if st.button("強制重整天氣", use_container_width=True):
+                if st.button("重整天氣", use_container_width=True):
                     st.cache_data.clear()
                     st.rerun()
                     
             st.dataframe(df_live[["開賽時間 (台灣時間)", "對戰組合", "賽事進度", "系統風險預測", "即時氣象"]], width="stretch", hide_index=True, height=245)
 
-    # 🎯 需求 3：新增專業判定邏輯備註小字，提升學術報告的嚴謹度
     st.markdown('<div class="logic-note">* 系統風險判定標準：串接全美氣象局（NWS）逐時預報，當預報包含 Rain/Thunderstorm 觸發紅燈風險；包含 Shower/Cloudy 觸發黃燈注意；室內巨蛋球場與常規晴朗天氣則自動歸類為安全綠/藍燈。</div>', unsafe_allow_html=True)
 
 st.markdown("<br>", unsafe_allow_html=True)
 
-# ----------------- 【區塊二：歷史大數據分析】 -----------------
+# 歷史大數據
 st.markdown('<div class="section-title">歷史停賽數據分析</div>', unsafe_allow_html=True)
 
 with st.spinner("正在下載歷史數據..."):
@@ -312,7 +310,6 @@ else:
             month_order = ["4月", "5月", "6月", "7月", "8月", "9月", "10月"]
             select_months = st.multiselect("賽季月份 (可多選)：", month_order)
 
-    # 執行時間維度過濾
     current_year = datetime.now().year
     df_time_scoped = df_hist.copy()
     if time_range == "近 5 年數據":
@@ -322,12 +319,11 @@ else:
     elif time_range == "近 1 年數據 (接軌至最新昨天)":
         df_time_scoped = df_time_scoped[df_time_scoped["年份"] >= (current_year - 1)]
 
-    # 圖表分流邏輯
     df_chart_scope = df_time_scoped.copy()
     if select_months:
         df_chart_scope = df_chart_scope[df_chart_scope["月份"].isin(select_months)]
         
-    # 表格與 KPI 計算
+    # 表格計算
     df_table_scope = df_time_scoped.copy()
     if select_teams:
         df_table_scope = df_table_scope[df_table_scope["主場球隊"].isin(select_teams)]
@@ -347,7 +343,7 @@ else:
             value=f"{len(df_table_scope)} 場"
         )
 
-    # 歷史雙圖表呈現 (1:1 對齊)
+    # 雙圖表呈現 
     col_hist1, col_hist2 = st.columns([1, 1])
     
     with col_hist1:
